@@ -5,7 +5,6 @@ from torch.nn import Module, Sequential, Embedding, Linear, Dropout
 
 from model.transformer import TransformerBlock, RMSNorm
 
-
 class LLM(Module):
     def __init__(
         self,
@@ -53,4 +52,3 @@ class LLM(Module):
             inputs = torch.cat((inputs, next_token), dim=-1)
 
         return inputs
-

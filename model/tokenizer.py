@@ -2,9 +2,7 @@ from pathlib import Path
 from torch import Tensor, IntTensor
 from sentencepiece import SentencePieceProcessor, SentencePieceTrainer
 
-
 __model_types = ["unigram", "bpe", "word", "char"]
-
 
 class Tokenizer:
     def __init__(self, path: str = None) -> None:
@@ -74,4 +72,3 @@ def train_tokenizer(
         eos_id=eos_id,
         input_sentence_size=max_sample_size,
     )
-

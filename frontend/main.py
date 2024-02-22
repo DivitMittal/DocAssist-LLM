@@ -1,4 +1,4 @@
-"""Python file to serve as the frontend"""
+"""Streamlit python frontend"""
 import streamlit as st
 from streamlit_chat import message
 
@@ -10,6 +10,7 @@ def load_chain():
     llm = OpenAI(temperature=0)
     chain = ConversationChain(llm=llm)
     return chain
+
 
 chain = load_chain()
 
@@ -41,4 +42,3 @@ if st.session_state["generated"]:
     for i in range(len(st.session_state["generated"]) - 1, -1, -1):
         message(st.session_state["generated"][i], key=str(i))
         message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
-

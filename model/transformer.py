@@ -5,7 +5,6 @@ from torch.nn import Module, Sequential, Linear, Dropout
 from torch.nn import Parameter
 import torch.nn.functional as F
 
-
 EPS = torch.finfo(torch.float32).eps
 
 
@@ -44,11 +43,10 @@ class RotaryPositionalEncoding(Module):
         self.register_buffer("position_sin", position_sin)
 
     def _rotate_half(self, x: Tensor) -> Tensor:
-        x1, x2 = x[..., : self.dim_emb // 2], x[..., self.dim_emb // 2 :]
+        x1, x2 = x[..., : self.dim_emb // 2], x[..., self.dim_emb // 2:]
         return torch.cat((-x2, x1), dim=-1)
 
     def forward(self, x: Tensor) -> Tensor:
-
         return (x * self.position_cos) + (self._rotate_half(x) * self.position_sin)
 
 
@@ -74,7 +72,7 @@ class SwiGLU(Module):
 
     def forward(self, x: Tensor) -> Tensor:
         out = self.linear(x)
-        return F.silu(out[..., : self.dim_in]) + out[..., self.dim_in :]
+        return F.silu(out[..., : self.dim_in]) + out[..., self.dim_in:]
 
 
 class SelfAttention(Module):
@@ -89,12 +87,10 @@ class SelfAttention(Module):
         self.dim_k = dim_k
         self.causal = causal
 
-
         self.proj_q = Linear(dim_emb, dim_k, bias=False)
         self.proj_k = Linear(dim_emb, dim_k, bias=False)
         self.proj_v = Linear(dim_emb, dim_v, bias=False)
         self.proj_out = Linear(dim_v, dim_v, bias=False)
-
 
         causal_mask = torch.triu(torch.ones(seq_len, seq_len), diagonal=1).bool()
         self.register_buffer("causal_mask", causal_mask)
@@ -110,7 +106,7 @@ class SelfAttention(Module):
             m_inf = -torch.finfo(attn_scores.dtype).max
             attn_scores.masked_fill_(self.causal_mask[None, ...], m_inf)
 
-        attn_scores = torch.softmax(attn_scores * self.dim_k**-0.5, dim=-1)
+        attn_scores = torch.softmax(attn_scores * self.dim_k ** -0.5, dim=-1)
         out = self.proj_out(attn_scores @ v)
 
         if return_scores:
@@ -121,7 +117,7 @@ class SelfAttention(Module):
 
 class MultiHeadAttention(Module):
     def __init__(
-        self, seq_len: int, num_heads: int, dim_emb: int, dim_k: int = None, dim_v: int = None, causal=True
+            self, seq_len: int, num_heads: int, dim_emb: int, dim_k: int = None, dim_v: int = None, causal=True
     ) -> None:
         super().__init__()
 
@@ -138,16 +134,12 @@ class MultiHeadAttention(Module):
         self.dim_k = dim_k
         self.causal = causal
 
-
-
         self.positional_encoding = RotaryPositionalEncoding(seq_len, dim_emb // num_heads)
-
 
         self.proj_q = Linear(dim_emb, dim_k, bias=False)
         self.proj_k = Linear(dim_emb, dim_k, bias=False)
         self.proj_v = Linear(dim_emb, dim_v, bias=False)
         self.proj_out = Linear(dim_v, dim_v, bias=False)
-
 
         causal_mask = torch.triu(torch.ones(seq_len, seq_len), diagonal=1).bool()
         self.register_buffer("causal_mask", causal_mask)
@@ -158,30 +150,23 @@ class MultiHeadAttention(Module):
         k = self.proj_k(x)
         v = self.proj_v(x)
 
-
         q = q.view(-1, self.seq_len, self.num_heads, self.dim_head).permute(0, 2, 1, 3)
         k = k.view(-1, self.seq_len, self.num_heads, self.dim_head).permute(0, 2, 1, 3)
         v = v.view(-1, self.seq_len, self.num_heads, self.dim_head).permute(0, 2, 1, 3)
 
-
         q = self.positional_encoding(q)
         k = self.positional_encoding(k)
 
-
-        attn_scores = (q @ k.permute(0, 1, 3, 2)) * self.dim_k**-0.5
-
+        attn_scores = (q @ k.permute(0, 1, 3, 2)) * self.dim_k ** -0.5
 
         if self.causal:
             m_inf = -torch.finfo(attn_scores.dtype).max
             attn_scores.masked_fill_(self.causal_mask[None, None, ...], m_inf)
 
-
         attn_scores = torch.softmax(attn_scores, dim=-1)
         out = attn_scores @ v
 
-
         out = out.permute(0, 2, 1, 3).contiguous().view(-1, self.seq_len, self.dim_k)
-
 
         out = self.proj_out(out)
 
@@ -193,13 +178,13 @@ class MultiHeadAttention(Module):
 
 class FeedForward(Module):
     def __init__(
-        self,
-        dim_in: int,
-        dim_hidden: int,
-        num_hidden,
-        bias: bool = False,
-        normalize: bool = False,
-        dropout: float = 0.0,
+            self,
+            dim_in: int,
+            dim_hidden: int,
+            num_hidden,
+            bias: bool = False,
+            normalize: bool = False,
+            dropout: float = 0.0,
     ) -> None:
         super().__init__()
 
@@ -221,14 +206,14 @@ class FeedForward(Module):
 
 class TransformerBlock(Module):
     def __init__(
-        self,
-        seq_len: int,
-        dim_emb: int,
-        attn_num_heads: int,
-        attn_causal: bool = True,
-        ffd_num_hidden: int = 2,
-        ffd_bias: bool = False,
-        ffd_dropout: float = 0.0,
+            self,
+            seq_len: int,
+            dim_emb: int,
+            attn_num_heads: int,
+            attn_causal: bool = True,
+            ffd_num_hidden: int = 2,
+            ffd_bias: bool = False,
+            ffd_dropout: float = 0.0,
     ) -> None:
         super().__init__()
 
@@ -244,4 +229,3 @@ class TransformerBlock(Module):
         x = x + self.feed_forward(self.norm_2(x))
 
         return x
-
