@@ -48,32 +48,32 @@ client = QdrantClient(url=url, prefer_grpc=False)
 db = Qdrant(client=client, embeddings=embeddings, collection_name="vector_db")
 
 
-def reload_chat(u, a, e):
-    # Unique keys for each widget
-    user_query_key = u + 1
-    ask_button_key = a + 1
-    end_button_key = e + 1
-
-    user_query = st.text_input("You:", key=user_query_key)
-
-    if st.button("Ask", key=ask_button_key):
-        if user_query:
-            docs = db.similarity_search_with_score(query=user_query, k=5)
-            if not docs:
-                st.write("Sorry, I couldn't find any relevant information.")
-            else:
-                st.write("Here are some results:")
-                count = 0
-                for i, (doc, score) in enumerate(docs, 1):
-                    if count == 2:
-                        break
-                    if count == 1:
-                        st.write(f"Also, I know that: ")
-                    st.write(f"**Result {i}:**")
-                    st.write(f"Content: {doc.page_content}")
-                    st.write(f"Metadata: {doc.metadata}")
-                    st.write("---")
-                    count+=1
+# def reload_chat(u, a, e):
+#     # Unique keys for each widget
+#     user_query_key = u + 1
+#     ask_button_key = a + 1
+#     end_button_key = e + 1
+#
+#     user_query = st.text_input("You:", key=user_query_key)
+#
+#     if st.button("Ask", key=ask_button_key):
+#         if user_query:
+#             docs = db.similarity_search_with_score(query=user_query, k=5)
+#             if not docs:
+#                 st.write("Sorry, I couldn't find any relevant information.")
+#             else:
+#                 st.write("Here are some results:")
+#                 count = 0
+#                 for i, (doc, score) in enumerate(docs, 1):
+#                     if count == 2:
+#                         break
+#                     if count == 1:
+#                         st.write(f"Also, I know that: ")
+#                     st.write(f"**Result {i}:**")
+#                     st.write(f"Content: {doc.page_content}")
+#                     st.write(f"Source: {doc.metadata}")
+#                     st.write("---")
+#                     count+=1
 
 
 def main():
@@ -83,7 +83,7 @@ def main():
 
     left_co, cent_co,last_co = st.columns(3)
     with cent_co:
-        st.title("  Zesta DocAssist")
+        st.title("DocAssist")
 
     st.write("Welcome to DocAssist Chat! I'm proficient in Javascipt & React.js Framework and I'll do my best to find relevant information for you.")
 
@@ -103,12 +103,13 @@ def main():
                 st.write("Here are some results:")
                 for i, (doc, score) in enumerate(docs, 1):
                     st.write(doc.page_content)
-                    st.write(f"Metadata: {doc.metadata}")
+                    st.write(f"\n")
+                    st.write(f"Source: {doc.metadata}")
                     st.write("---")
                     break
 
-    if st.button("New Chat", key=end_button_key):
-        reload_chat(user_query_key, ask_button_key, end_button_key)
+    # if st.button("New Chat", key=end_button_key):
+    #     reload_chat(user_query_key, ask_button_key, end_button_key)
 
 
 if __name__ == "__main__":

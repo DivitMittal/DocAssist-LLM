@@ -35,4 +35,3 @@ qdrant = Qdrant.from_documents(
 )
 
 print("Vector DB Successfully Created!")
-

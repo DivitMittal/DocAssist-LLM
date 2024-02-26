@@ -96,7 +96,7 @@
   memtable_protection_bytes_per_key=0
   target_file_size_multiplier=1
   report_bg_io_stats=false
-  write_buffer_size=10485760
+  write_buffer_size=67108864
   memtable_huge_page_size=0
   max_successive_merges=0
   max_write_buffer_number=2
