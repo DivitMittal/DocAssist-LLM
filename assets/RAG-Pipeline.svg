@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg height='78pt' preserveAspectRatio='xMidYMid meet' viewBox='0.00 0.00 625.25 78.00' width='625pt' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns='http://www.w3.org/2000/svg'>
+<g class='graph' id='graph0' transform='scale(1 1) rotate(0) translate(4 74)'>
+<title>RAG</title>
+<polygon fill='white' points='-4,4 -4,-74 621.25,-74 621.25,4 -4,4' stroke='none'/>
+
+<g class='node' id='node1'>
+<title>Query</title>
+<path d='M42,-36C42,-36 12,-36 12,-36 6,-36 0,-30 0,-24 0,-24 0,-12 0,-12 0,-6 6,0 12,0 12,0 42,0 42,0 48,0 54,-6 54,-12 54,-12 54,-24 54,-24 54,-30 48,-36 42,-36' fill='none' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='27' y='-12.95'>Query</text>
+</g>
+
+<g class='node' id='node2'>
+<title>Retriever</title>
+<path d='M145.25,-70C145.25,-70 103,-70 103,-70 97,-70 91,-64 91,-58 91,-58 91,-46 91,-46 91,-40 97,-34 103,-34 103,-34 145.25,-34 145.25,-34 151.25,-34 157.25,-40 157.25,-46 157.25,-46 157.25,-58 157.25,-58 157.25,-64 151.25,-70 145.25,-70' fill='none' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='124.12' y='-46.95'>Retriever</text>
+</g>
+
+<g class='edge' id='edge1'>
+<title>Query&#45;&gt;Retriever</title>
+<path d='M54.5,-27.47C62.38,-30.29 71.24,-33.45 79.9,-36.55' fill='none' stroke='black'/>
+<polygon fill='black' points='78.66,-39.82 89.25,-39.89 81.01,-33.23 78.66,-39.82' stroke='black'/>
+</g>
+
+<g class='node' id='node4'>
+<title>Generator</title>
+<path d='M443,-36C443,-36 397,-36 397,-36 391,-36 385,-30 385,-24 385,-24 385,-12 385,-12 385,-6 391,0 397,0 397,0 443,0 443,0 449,0 455,-6 455,-12 455,-12 455,-24 455,-24 455,-30 449,-36 443,-36' fill='none' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='420' y='-12.95'>Generator</text>
+</g>
+
+<g class='edge' id='edge3'>
+<title>Query&#45;&gt;Generator</title>
+<path d='M54.26,-18C119.7,-18 290.69,-18 373.18,-18' fill='none' stroke='black'/>
+<polygon fill='black' points='373.17,-21.5 383.17,-18 373.17,-14.5 373.17,-21.5' stroke='black'/>
+</g>
+
+<g class='node' id='node3'>
+<title>Documents</title>
+<path d='M336,-70C336,-70 281.75,-70 281.75,-70 275.75,-70 269.75,-64 269.75,-58 269.75,-58 269.75,-46 269.75,-46 269.75,-40 275.75,-34 281.75,-34 281.75,-34 336,-34 336,-34 342,-34 348,-40 348,-46 348,-46 348,-58 348,-58 348,-64 342,-70 336,-70' fill='none' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='308.88' y='-46.95'>Documents</text>
+</g>
+
+<g class='edge' id='edge2'>
+<title>Retriever&#45;&gt;Documents</title>
+<path d='M157.38,-52C185.21,-52 225.87,-52 257.92,-52' fill='none' stroke='black'/>
+<polygon fill='black' points='257.78,-55.5 267.78,-52 257.78,-48.5 257.78,-55.5' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='213.5' y='-55.2'>Find Relevant</text>
+</g>
+
+<g class='edge' id='edge4'>
+<title>Documents&#45;&gt;Generator</title>
+<path d='M348.35,-40.01C356.54,-37.46 365.26,-34.74 373.68,-32.12' fill='none' stroke='black'/>
+<polygon fill='black' points='374.56,-35.51 383.06,-29.2 372.48,-28.83 374.56,-35.51' stroke='black'/>
+</g>
+
+<g class='node' id='node5'>
+<title>Response</title>
+<path d='M605.25,-36C605.25,-36 561.5,-36 561.5,-36 555.5,-36 549.5,-30 549.5,-24 549.5,-24 549.5,-12 549.5,-12 549.5,-6 555.5,0 561.5,0 561.5,0 605.25,0 605.25,0 611.25,0 617.25,-6 617.25,-12 617.25,-12 617.25,-24 617.25,-24 617.25,-30 611.25,-36 605.25,-36' fill='none' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='583.38' y='-12.95'>Response</text>
+</g>
+
+<g class='edge' id='edge5'>
+<title>Generator&#45;&gt;Response</title>
+<path d='M455.22,-18C479.21,-18 511.51,-18 537.56,-18' fill='none' stroke='black'/>
+<polygon fill='black' points='537.52,-21.5 547.52,-18 537.52,-14.5 537.52,-21.5' stroke='black'/>
+<text font-family='Times,serif' font-size='14.00' text-anchor='middle' x='502.25' y='-21.2'>Synthesize</text>
+</g>
+</g>
+</svg>
