@@ -9,11 +9,15 @@ EPS = torch.finfo(torch.float32).eps
 
 
 class CosinePositionalEncoding(Module):
-    def __init__(self, seq_len: int, dim_emb: int, base: int = 10_000, eps: float = EPS) -> None:
+    def __init__(
+        self, seq_len: int, dim_emb: int, base: int = 10_000, eps: float = EPS
+    ) -> None:
         super().__init__()
 
         indices = torch.arange(0, seq_len, dtype=torch.float)
-        scale = 1 / (base ** (torch.arange(0, dim_emb, 2, dtype=torch.float) / dim_emb) + eps)
+        scale = 1 / (
+            base ** (torch.arange(0, dim_emb, 2, dtype=torch.float) / dim_emb) + eps
+        )
 
         position = torch.zeros(1, 1, seq_len, dim_emb)
         position[:, :, :, 0::2] = torch.sin(indices[None, None, :, None] * scale)
@@ -26,12 +30,16 @@ class CosinePositionalEncoding(Module):
 
 
 class RotaryPositionalEncoding(Module):
-    def __init__(self, seq_len: int, dim_emb: int, base: int = 10000, eps: float = EPS) -> None:
+    def __init__(
+        self, seq_len: int, dim_emb: int, base: int = 10000, eps: float = EPS
+    ) -> None:
         super().__init__()
 
         self.dim_emb = dim_emb
         indices = torch.arange(0, seq_len, dtype=torch.float)
-        scale = 1 / (base ** (torch.arange(0, dim_emb, 2, dtype=torch.float) / dim_emb) + eps)
+        scale = 1 / (
+            base ** (torch.arange(0, dim_emb, 2, dtype=torch.float) / dim_emb) + eps
+        )
 
         position = torch.outer(indices, scale)
         position = torch.cat((position, position), dim=-1)
@@ -43,7 +51,7 @@ class RotaryPositionalEncoding(Module):
         self.register_buffer("position_sin", position_sin)
 
     def _rotate_half(self, x: Tensor) -> Tensor:
-        x1, x2 = x[..., : self.dim_emb // 2], x[..., self.dim_emb // 2:]
+        x1, x2 = x[..., : self.dim_emb // 2], x[..., self.dim_emb // 2 :]
         return torch.cat((-x2, x1), dim=-1)
 
     def forward(self, x: Tensor) -> Tensor:
@@ -72,11 +80,18 @@ class SwiGLU(Module):
 
     def forward(self, x: Tensor) -> Tensor:
         out = self.linear(x)
-        return F.silu(out[..., : self.dim_in]) + out[..., self.dim_in:]
+        return F.silu(out[..., : self.dim_in]) + out[..., self.dim_in :]
 
 
 class SelfAttention(Module):
-    def __init__(self, seq_len: int, dim_emb: int, dim_k: int = None, dim_v: int = None, causal=True) -> None:
+    def __init__(
+        self,
+        seq_len: int,
+        dim_emb: int,
+        dim_k: int = None,
+        dim_v: int = None,
+        causal=True,
+    ) -> None:
         super().__init__()
 
         if dim_k is None:
@@ -95,7 +110,9 @@ class SelfAttention(Module):
         causal_mask = torch.triu(torch.ones(seq_len, seq_len), diagonal=1).bool()
         self.register_buffer("causal_mask", causal_mask)
 
-    def forward(self, x: Tensor, return_scores: bool = False) -> Tensor | Tuple[Tensor, Tensor]:
+    def forward(
+        self, x: Tensor, return_scores: bool = False
+    ) -> Tensor | Tuple[Tensor, Tensor]:
         q = self.proj_q(x)
         k = self.proj_k(x)
         v = self.proj_v(x)
@@ -106,7 +123,7 @@ class SelfAttention(Module):
             m_inf = -torch.finfo(attn_scores.dtype).max
             attn_scores.masked_fill_(self.causal_mask[None, ...], m_inf)
 
-        attn_scores = torch.softmax(attn_scores * self.dim_k ** -0.5, dim=-1)
+        attn_scores = torch.softmax(attn_scores * self.dim_k**-0.5, dim=-1)
         out = self.proj_out(attn_scores @ v)
 
         if return_scores:
@@ -117,7 +134,13 @@ class SelfAttention(Module):
 
 class MultiHeadAttention(Module):
     def __init__(
-            self, seq_len: int, num_heads: int, dim_emb: int, dim_k: int = None, dim_v: int = None, causal=True
+        self,
+        seq_len: int,
+        num_heads: int,
+        dim_emb: int,
+        dim_k: int = None,
+        dim_v: int = None,
+        causal=True,
     ) -> None:
         super().__init__()
 
@@ -134,7 +157,9 @@ class MultiHeadAttention(Module):
         self.dim_k = dim_k
         self.causal = causal
 
-        self.positional_encoding = RotaryPositionalEncoding(seq_len, dim_emb // num_heads)
+        self.positional_encoding = RotaryPositionalEncoding(
+            seq_len, dim_emb // num_heads
+        )
 
         self.proj_q = Linear(dim_emb, dim_k, bias=False)
         self.proj_k = Linear(dim_emb, dim_k, bias=False)
@@ -144,7 +169,9 @@ class MultiHeadAttention(Module):
         causal_mask = torch.triu(torch.ones(seq_len, seq_len), diagonal=1).bool()
         self.register_buffer("causal_mask", causal_mask)
 
-    def forward(self, x: Tensor, return_scores: bool = False) -> Tensor | Tuple[Tensor, Tensor]:
+    def forward(
+        self, x: Tensor, return_scores: bool = False
+    ) -> Tensor | Tuple[Tensor, Tensor]:
 
         q = self.proj_q(x)
         k = self.proj_k(x)
@@ -157,7 +184,7 @@ class MultiHeadAttention(Module):
         q = self.positional_encoding(q)
         k = self.positional_encoding(k)
 
-        attn_scores = (q @ k.permute(0, 1, 3, 2)) * self.dim_k ** -0.5
+        attn_scores = (q @ k.permute(0, 1, 3, 2)) * self.dim_k**-0.5
 
         if self.causal:
             m_inf = -torch.finfo(attn_scores.dtype).max
@@ -178,13 +205,13 @@ class MultiHeadAttention(Module):
 
 class FeedForward(Module):
     def __init__(
-            self,
-            dim_in: int,
-            dim_hidden: int,
-            num_hidden,
-            bias: bool = False,
-            normalize: bool = False,
-            dropout: float = 0.0,
+        self,
+        dim_in: int,
+        dim_hidden: int,
+        num_hidden,
+        bias: bool = False,
+        normalize: bool = False,
+        dropout: float = 0.0,
     ) -> None:
         super().__init__()
 
@@ -206,22 +233,28 @@ class FeedForward(Module):
 
 class TransformerBlock(Module):
     def __init__(
-            self,
-            seq_len: int,
-            dim_emb: int,
-            attn_num_heads: int,
-            attn_causal: bool = True,
-            ffd_num_hidden: int = 2,
-            ffd_bias: bool = False,
-            ffd_dropout: float = 0.0,
+        self,
+        seq_len: int,
+        dim_emb: int,
+        attn_num_heads: int,
+        attn_causal: bool = True,
+        ffd_num_hidden: int = 2,
+        ffd_bias: bool = False,
+        ffd_dropout: float = 0.0,
     ) -> None:
         super().__init__()
 
         self.norm_1 = RMSNorm(dim_emb)
-        self.multihead_attn = MultiHeadAttention(seq_len, attn_num_heads, dim_emb, causal=attn_causal)
+        self.multihead_attn = MultiHeadAttention(
+            seq_len, attn_num_heads, dim_emb, causal=attn_causal
+        )
         self.norm_2 = RMSNorm(dim_emb)
         self.feed_forward = FeedForward(
-            dim_emb, dim_emb, num_hidden=ffd_num_hidden, bias=ffd_bias, dropout=ffd_dropout
+            dim_emb,
+            dim_emb,
+            num_hidden=ffd_num_hidden,
+            bias=ffd_bias,
+            dropout=ffd_dropout,
         )
 
     def forward(self, x: Tensor) -> Tensor:

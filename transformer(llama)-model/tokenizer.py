@@ -48,6 +48,7 @@ class Tokenizer:
         out = "".join(self.sp.Decode(inp.tolist()))
         return out
 
+
 def train_tokenizer(
     input_file: str,
     vocab_size: int,

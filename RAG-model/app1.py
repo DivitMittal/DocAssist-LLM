@@ -34,12 +34,10 @@ st.markdown(
 )
 
 model_name = "BAAI/bge-large-en"
-model_kwargs = {'device': 'cpu'}
-encode_kwargs = {'normalize_embeddings': False}
+model_kwargs = {"device": "cpu"}
+encode_kwargs = {"normalize_embeddings": False}
 embeddings = HuggingFaceBgeEmbeddings(
-    model_name=model_name,
-    model_kwargs=model_kwargs,
-    encode_kwargs=encode_kwargs
+    model_name=model_name, model_kwargs=model_kwargs, encode_kwargs=encode_kwargs
 )
 
 url = "http://localhost:6333"
@@ -77,15 +75,17 @@ db = Qdrant(client=client, embeddings=embeddings, collection_name="vector_db")
 
 
 def main():
-    left_co, cent_co,last_co = st.columns(3)
+    left_co, cent_co, last_co = st.columns(3)
     with cent_co:
         st.image("./assets/logo.png", width=150)
 
-    left_co, cent_co,last_co = st.columns(3)
+    left_co, cent_co, last_co = st.columns(3)
     with cent_co:
         st.title("DocAssist")
 
-    st.write("Welcome to DocAssist Chat! I'm proficient in Javascipt & React.js Framework and I'll do my best to find relevant information for you.")
+    st.write(
+        "Welcome to DocAssist Chat! I'm proficient in Javascipt & React.js Framework and I'll do my best to find relevant information for you."
+    )
 
     user_query_key = 0
     ask_button_key = 100
@@ -114,4 +114,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

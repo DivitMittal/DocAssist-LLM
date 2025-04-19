@@ -60,7 +60,11 @@ for step in range(MAX_ITER):
         loss_val = estimate_loss(
             data=val_data, model=m, block_size=BLOCK_SIZE, batch_size=BATCH_SIZE
         )
-        print("step {:10} | train loss {:6.4f} | val loss {:6.4f}".format(step, loss_train, loss_val))
+        print(
+            "step {:10} | train loss {:6.4f} | val loss {:6.4f}".format(
+                step, loss_train, loss_val
+            )
+        )
 
     xb, yb = get_batch(data=train_data, block_size=BLOCK_SIZE, batch_size=BATCH_SIZE)
     logits, loss = m.forward(xb, yb)

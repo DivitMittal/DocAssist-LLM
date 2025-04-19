@@ -26,7 +26,12 @@ class LLM(Module):
         self.transformer = Sequential(
             *[
                 TransformerBlock(
-                    context_size, dim_emb, attn_num_heads, attn_causal=True, ffd_bias=ffd_bias, ffd_dropout=ffd_dropout
+                    context_size,
+                    dim_emb,
+                    attn_num_heads,
+                    attn_causal=True,
+                    ffd_bias=ffd_bias,
+                    ffd_dropout=ffd_dropout,
                 )
                 for _ in range(num_layers)
             ]
@@ -44,9 +49,19 @@ class LLM(Module):
         return x
 
     @torch.inference_mode()
-    def generate(self, inputs: Tensor, max_seq_len: int, temperature: float = 1.0, top_p: int = None) -> Tensor:
+    def generate(
+        self,
+        inputs: Tensor,
+        max_seq_len: int,
+        temperature: float = 1.0,
+        top_p: int = None,
+    ) -> Tensor:
         for _ in range(max_seq_len):
-            inputs_cond = inputs if inputs.size(1) <= self.context_size else inputs[:, -self.context_size :]
+            inputs_cond = (
+                inputs
+                if inputs.size(1) <= self.context_size
+                else inputs[:, -self.context_size :]
+            )
             logits = self(inputs_cond)[:, -1, :]
             probs = F.softmax(logits / temperature, dim=-1)
             next_token = torch.multinomial(probs, num_samples=1)

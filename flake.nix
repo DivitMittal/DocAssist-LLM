@@ -14,7 +14,23 @@
     flake-parts.lib.mkFlake {inherit inputs;} {
       systems = import inputs.systems;
       imports = [
-        ./formatters.nix
+        inputs.treefmt-nix.flakeModule
       ];
+
+      perSystem.treefmt = {
+        flakeCheck = false;
+
+        programs = {
+          #typos.enable = true;
+          ## Nix
+          alejandra.enable = true;
+          deadnix.enable = true;
+          statix.enable = true;
+          ## Python
+          black.enable = true;
+        };
+
+        projectRootFile = "flake.nix";
+      };
     };
 }
