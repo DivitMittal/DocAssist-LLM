@@ -38,7 +38,7 @@ class Tokenizer:
         pad_seq: bool = False,
         seq_len: int = None,
     ) -> Tensor:
-        out = self.sp.EncodeAsIds(input, add_bos=beg_of_string, add_eos=end_of_string)
+        out = self.sp.EncodeAsIds(inp, add_bos=beg_of_string, add_eos=end_of_string)
 
         if pad_seq and len(out) < seq_len:
             out = [*[self.pad_id] * (seq_len - len(out)), *out]
