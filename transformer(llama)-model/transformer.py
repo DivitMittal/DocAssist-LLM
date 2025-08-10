@@ -80,7 +80,7 @@ class SwiGLU(Module):
 
     def forward(self, x: Tensor) -> Tensor:
         out = self.linear(x)
-        return F.silu(out[..., : self.dim_in]) + out[..., self.dim_in :]
+        return F.silu(out[..., : self.dim_in]) * out[..., self.dim_in :]
 
 
 class SelfAttention(Module):
