@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Module, Sequential, Embedding, Linear, Dropout
 
-from model.transformer import TransformerBlock, RMSNorm
+from transformer import TransformerBlock, RMSNorm
 
 
 class LLM(Module):
@@ -54,7 +54,7 @@ class LLM(Module):
         inputs: Tensor,
         max_seq_len: int,
         temperature: float = 1.0,
-        top_p: int = None,
+        top_p: float = None,
     ) -> Tensor:
         for _ in range(max_seq_len):
             inputs_cond = (
@@ -64,6 +64,17 @@ class LLM(Module):
             )
             logits = self(inputs_cond)[:, -1, :]
             probs = F.softmax(logits / temperature, dim=-1)
+
+            if top_p is not None:
+                sorted_probs, sorted_indices = torch.sort(probs, descending=True)
+                cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
+                cutoff_mask = cumulative_probs > top_p
+                cutoff_mask[..., 1:] = cutoff_mask[..., :-1].clone()
+                cutoff_mask[..., 0] = False
+                sorted_probs[cutoff_mask] = 0.0
+                probs = torch.zeros_like(probs).scatter(-1, sorted_indices, sorted_probs)
+                probs = probs / probs.sum(dim=-1, keepdim=True)
+
             next_token = torch.multinomial(probs, num_samples=1)
             inputs = torch.cat((inputs, next_token), dim=-1)
 
