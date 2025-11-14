@@ -167,3 +167,8 @@ cython_debug/
 
 ## macOS template
 .DS_Store
+
+## Tools
+.claude
+CLAUDE.md
+.mcp*
