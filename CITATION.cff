@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+title: DocAssist-LLM
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Divit
+    family-name: Mittal
+    email: 64.69.76.69.74.m@gmail.com
+repository-code: 'https://github.com/DivitMittal/DocAssist-LLM'
+url: 'https://github.com/DivitMittal/DocAssist-LLM'
+abstract: >-
+  RAG-enhanced LLaMa-like transformer neural network based LLM for assistance
+  on programming language/framework documentations, with a Streamlit front-end.
+  The RAG-LLTN model integrates Retrieval-Augmented Generation (RAG)
+  capabilities with the architecture of LLaMa-like Transformer Neural Networks
+  (LLTN), enhancing its ability to retrieve and generate contextually relevant
+  and accurate documentation assistance.
+keywords:
+  - machine-learning
+  - deep-learning
+  - transformer
+  - llama
+  - rag
+  - retrieval-augmented-generation
+  - nlp
+  - natural-language-processing
+  - documentation-assistant
+  - pytorch
+  - streamlit
+  - qdrant
+  - langchain
+license: MIT
+date-released: '2024-02-22'
