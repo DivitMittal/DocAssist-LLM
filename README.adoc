@@ -5,6 +5,9 @@
 :experimental:
 :diagram-enabled:
 
+image:https://github.com/DivitMittal/DocAssist-LLM/actions/workflows/flake-check.yml/badge.svg[Flake Check]
+image:https://github.com/DivitMittal/DocAssist-LLM/actions/workflows/flake-lock-update.yml/badge.svg[Flake Lock Update]
+
 image::assets/logo.png[Logo, align="center", width=150]
 
 RAG-enhanced LLaMa-like transformer neural network based LLM for assistance on programming languages/frameworks' documentations, with a streamlit front-end.
