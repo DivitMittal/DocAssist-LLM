@@ -178,3 +178,6 @@ cython_debug/
 AGENTS.md
 .mcp*
 .serena*
+
+## git worktrees kept inside the project directory
+.worktrees/
